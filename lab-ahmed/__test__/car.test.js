@@ -4,58 +4,54 @@ const request = require('superagent');
 require('jest');
 require('../server.js');
 
-describe('Car routes', function(){
-  var car = null;
+describe('Car Routes', () => {
+  let car = null;
 
-  describe('POST: /api/car', function(){
-    it('should respond with the body content for a POST request with a valid body', function(done){
+  describe('POST: /api/car', function() {
+    it('should create and return a car,', function(done) {
       request.post('localhost:3000/api/car')
-        .send({name: 'test name', content: 'test content'})
-        .end((err,res) => {
+        .send({ name: 'test name', content: 'test content' })
+        .end((err, res) => {
           if (err) return done(err);
           car = JSON.parse(res.text);
-          //console.log('res', res);
-          //console.log('res text', res.text);
-          //console.log('car', car);
           expect(res.status).toEqual(200);
           expect(car.name).toEqual('test name');
           expect(car.content).toEqual('test content');
           done();
         });
     });
-    it('should respond with "bad request" if no request body was provided or the body was invalid', function(done){
+    it('should respond with bad request if no req body or if req body is invalid', function(done) {
       request.post('localhost:3000/api/car')
-        .send({name: '', content: ''})
-        .end((err,res) => {
+        .end((err, res) => {
           expect(res.status).toEqual(400);
           done();
         });
     });
   });
-  describe('GET: /api/car', () => {
-    it('should contain the response body for a request made with a valid id', function(done){
-      request.get(`localhost:3000/api/car?id=${car.id}`)
+
+  describe('GET: /api/car/:carId', function() {
+    it('should GET and return a car,', function(done) {
+      request.get(`localhost:3000/api/car/${car.id}`)
         .end((err, res) => {
-          if(err) return done(err);
+          if (err) return done(err);
           car = JSON.parse(res.text);
-          console.log('car', car);
           expect(res.status).toEqual(200);
           expect(car.name).toEqual('test name');
           expect(car.content).toEqual('test content');
           done();
         });
     });
-    it('should respond with "not found" for valid requests made with an id that was not found', function(done){
-      request.get('localhost:3000/api/car?id=abc')
+    it('should respond with not found for valid requests made with an id that was not found', function(done) {
+      request.get('localhost:3000/api/car/hey')
         .end((err, res) => {
           expect(res.status).toEqual(404);
           done();
         });
     });
-    it('should respond with "bad request" if no id was provided in the request', function(done){
-      request.get('localhost:3000/api/car')
+    it('should respond with bad request if no id was provided in the request', function(done) {
+      request.get('localhost:3000/api/car/:id')
         .end((err, res) => {
-          expect(res.status).toEqual(400);
+          expect(res.status).toEqual(404);
           done();
         });
     });

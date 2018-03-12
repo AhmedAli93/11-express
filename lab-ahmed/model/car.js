@@ -8,15 +8,15 @@ const storage = require('../lib/storage.js');
 const Car = module.exports = function(name, content) {
   debug('Car constructor');
 
-  if (!name) throw new Error('expected name');
-  if (!content) throw new Error('expected content');
+  if (!name) throw new createError(400, 'expected name');
+  if (!content) throw new createError(400, 'expected content');
 
   this.id = uuidv4();
   this.name = name;
   this.content = content;
 };
 
-Car.createNote = function(_car) {
+Car.createCar = function(_car) {
   debug('createCar');
 
   try {
